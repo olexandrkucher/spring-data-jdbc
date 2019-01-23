@@ -17,7 +17,7 @@ public class SelectValidatorUnitTests {
 		Column column = SQL.table("table").column("foo");
 
 		assertThatThrownBy(() -> {
-			SQL.select(column).from(SQL.table("bar")).build();
+			SQL.newSelect(column).from(SQL.table("bar")).build();
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
@@ -27,7 +27,7 @@ public class SelectValidatorUnitTests {
 		Column column = SQL.table("table").column("foo");
 
 		assertThatThrownBy(() -> {
-			SQL.select(Functions.count(column)).from(SQL.table("bar")).build();
+			SQL.newSelect(Functions.count(column)).from(SQL.table("bar")).build();
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
@@ -37,7 +37,7 @@ public class SelectValidatorUnitTests {
 		Column column = SQL.table("table").column("foo");
 
 		assertThatThrownBy(() -> {
-			SQL.select(Functions.distinct(column)).from(SQL.table("bar")).build();
+			SQL.newSelect(Functions.distinct(column)).from(SQL.table("bar")).build();
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
@@ -47,7 +47,7 @@ public class SelectValidatorUnitTests {
 		Column column = SQL.table("table").column("foo");
 
 		assertThatThrownBy(() -> {
-			SQL.select(SQL.column("foo")) //
+			SQL.newSelect(SQL.column("foo")) //
 					.from(SQL.table("bar")).orderBy(column) //
 					.build();
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a ORDER BY column not imported by FROM [bar] or JOIN []");
@@ -59,7 +59,7 @@ public class SelectValidatorUnitTests {
 		Column column = SQL.table("table").column("foo");
 
 		assertThatThrownBy(() -> {
-			SQL.select(SQL.column("foo")).from(SQL.table("bar")) //
+			SQL.newSelect(SQL.column("foo")).from(SQL.table("bar")) //
 					.where(new SimpleCondition(column, "=", "foo")) //
 					.build();
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a WHERE predicate not imported by FROM [bar] or JOIN []");
