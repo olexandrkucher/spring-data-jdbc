@@ -1,7 +1,7 @@
 package org.springframework.data.relational.core.sql;
 
 import org.springframework.data.relational.core.sql.BindMarker.NamedBindMarker;
-import org.springframework.data.relational.core.sql.SelectBuilder.SelectFrom;
+import org.springframework.data.relational.core.sql.SelectBuilder.SelectAndFrom;
 import org.springframework.util.Assert;
 
 /**
@@ -22,8 +22,8 @@ public abstract class SQL {
 	 * @return the {@link SelectBuilder} containing {@link Expression}.
 	 * @see SelectBuilder#select(Expression)
 	 */
-	public static SelectFrom select(Expression expression) {
-		return new DefaultSelectBuilder().select(expression);
+	public static SelectAndFrom newSelect(Expression expression) {
+		return Select.builder().select(expression);
 	}
 
 	/**
@@ -33,8 +33,8 @@ public abstract class SQL {
 	 * @return the {@link SelectBuilder} containing {@link Expression}s.
 	 * @see SelectBuilder#select(Expression...)
 	 */
-	public static SelectFrom select(Expression... expressions) {
-		return new DefaultSelectBuilder().select(expressions);
+	public static SelectAndFrom newSelect(Expression... expressions) {
+		return Select.builder().select(expressions);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public abstract class SQL {
 	 * @see SelectBuilder
 	 */
 	public static SelectBuilder select() {
-		return new DefaultSelectBuilder();
+		return Select.builder();
 	}
 
 	/**

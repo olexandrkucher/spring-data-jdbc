@@ -20,6 +20,19 @@ public class SimpleFunction extends AbstractSegment implements Expression {
 		this.expressions = expressions;
 	}
 
+	/**
+	 * Expose this function result under a column {@code alias}.
+	 *
+	 * @param alias column alias name, must not {@literal null} or empty.
+	 * @return the aliased {@link SimpleFunction}.
+	 */
+	public SimpleFunction as(String alias) {
+
+		Assert.hasText(alias, "Alias must not be null or empty");
+
+		return new AliasedFunction(functionName, expressions, alias);
+	}
+
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -30,6 +43,9 @@ public class SimpleFunction extends AbstractSegment implements Expression {
 		visitor.leave(this);
 	}
 
+	/**
+	 * @return the function name.
+	 */
 	public String getFunctionName() {
 		return functionName;
 	}
@@ -37,5 +53,23 @@ public class SimpleFunction extends AbstractSegment implements Expression {
 	@Override
 	public String toString() {
 		return functionName + "(" + StringUtils.collectionToDelimitedString(expressions, ", ") + ")";
+	}
+
+	/**
+	 * {@link Aliased} {@link SimpleFunction} implementation.
+	 */
+	static class AliasedFunction extends SimpleFunction implements Aliased {
+
+		private final String alias;
+
+		AliasedFunction(String functionName, List<Expression> expressions, String alias) {
+			super(functionName, expressions);
+			this.alias = alias;
+		}
+
+		@Override
+		public String getAlias() {
+			return alias;
+		}
 	}
 }

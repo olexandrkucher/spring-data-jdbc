@@ -112,11 +112,21 @@ public class Table extends AbstractSegment implements Segment, Named {
 		return name;
 	}
 
+	/**
+	 * @return the table name as it is used in references. This can be the actual {@link #getName() name} or an {@link Aliased#getAlias() alias}.
+	 */
+	public String getReferenceName() {
+		return name;
+	}
+
 	@Override
 	public String toString() {
 		return name;
 	}
 
+	/**
+	 * {@link Aliased} {@link Table} implementation.
+	 */
 	static class AliasedTable extends Table implements Aliased {
 
 		private final String alias;
@@ -132,6 +142,11 @@ public class Table extends AbstractSegment implements Segment, Named {
 		@Override
 		public String getAlias() {
 			return alias;
+		}
+
+		@Override
+		public String getReferenceName() {
+			return getAlias();
 		}
 
 		@Override

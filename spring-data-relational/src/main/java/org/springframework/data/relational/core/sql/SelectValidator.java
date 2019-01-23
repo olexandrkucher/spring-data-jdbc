@@ -8,6 +8,7 @@ import java.util.Set;
  */
 class SelectValidator implements Visitor {
 
+	private int selectFieldCount;
 	private Set<Table> requiredBySelect = new HashSet<>();
 	private Set<Table> requiredByWhere = new HashSet<>();
 	private Set<Table> requiredByOrderBy = new HashSet<>();
@@ -24,6 +25,10 @@ class SelectValidator implements Visitor {
 	private void doValidate(Select select) {
 
 		select.visit(this);
+
+		if (selectFieldCount == 0) {
+			throw new IllegalStateException("SELECT does not declare a select list");
+		}
 
 		for (Table table : requiredBySelect) {
 			if (!join.contains(table) && !from.contains(table)) {
@@ -51,10 +56,12 @@ class SelectValidator implements Visitor {
 
 			Table table = ((AsteriskFromTable) segment).getTable();
 			requiredBySelect.add(table);
+			selectFieldCount++;
 		}
 
 		if (segment instanceof Column && (parent instanceof Select || parent instanceof SimpleFunction || parent instanceof Distinct)) {
 
+			selectFieldCount++;
 			Table table = ((Column) segment).getTable();
 
 			if (table != null) {

@@ -112,6 +112,8 @@ public class Column extends AbstractSegment implements Expression, Named {
 	@Override
 	public void visit(Visitor visitor) {
 
+		Assert.notNull(visitor, "Visitor must not be null!");
+
 		visitor.enter(this);
 
 		if (table != null) {
@@ -122,6 +124,13 @@ public class Column extends AbstractSegment implements Expression, Named {
 
 	@Override
 	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the column name as it is used in references. This can be the actual {@link #getName() name} or an {@link Aliased#getAlias() alias}.
+	 */
+	public String getReferenceName() {
 		return name;
 	}
 
@@ -148,7 +157,7 @@ public class Column extends AbstractSegment implements Expression, Named {
 	}
 
 	/**
-	 * Aliased column implementation.
+	 * {@link Aliased} {@link Column} implementation.
 	 */
 	static class AliasedColumn extends Column implements Aliased {
 
@@ -162,6 +171,11 @@ public class Column extends AbstractSegment implements Expression, Named {
 		@Override
 		public String getAlias() {
 			return alias;
+		}
+
+		@Override
+		public String getReferenceName() {
+			return getAlias();
 		}
 
 		@Override

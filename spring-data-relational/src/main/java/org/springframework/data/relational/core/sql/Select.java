@@ -21,6 +21,16 @@ import java.util.OptionalLong;
  */
 public interface Select extends Visitable {
 
+
+	/**
+	 * Creates a new {@link SelectBuilder}.
+	 *
+	 * @return a new {@link SelectBuilder}.
+	 */
+	static SelectBuilder builder() {
+		return new DefaultSelectBuilder();
+	}
+
 	/**
 	 * Optional limit. Used for limit/offset paging.
 	 *

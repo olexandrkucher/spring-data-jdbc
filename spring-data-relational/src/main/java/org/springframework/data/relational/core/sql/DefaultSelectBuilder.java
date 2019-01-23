@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.relational.core.sql.Join.JoinType;
 import org.springframework.data.relational.core.sql.SelectBuilder.SelectAndFrom;
 import org.springframework.data.relational.core.sql.SelectBuilder.SelectFromAndJoin;
@@ -28,15 +27,15 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	private List<OrderByField> orderBy = new ArrayList<>();
 
 	@Override
-	public SelectBuilder top(int topCount) {
+	public SelectBuilder top(int count) {
 
-		top = SelectTop.create(topCount);
+		top = SelectTop.create(count);
 		return this;
 	}
 
 	@Override
 	public DefaultSelectBuilder select(String sql) {
-		return select(SQL.column(sql));
+		return select(Column.create(sql));
 	}
 
 	@Override
@@ -52,9 +51,14 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public DefaultSelectBuilder select(Collection<? extends Expression> expression) {
-		selectList.addAll(expression);
+	public DefaultSelectBuilder select(Collection<? extends Expression> expressions) {
+		selectList.addAll(expressions);
 		return this;
+	}
+
+	@Override
+	public SelectFromAndJoin from(String table) {
+		return from(Table.create(table));
 	}
 
 	@Override
@@ -76,14 +80,20 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectFromAndJoin limitOffset(PageRequest pageable) {
-		this.limit = pageable.getOffset() + pageable.getPageSize();
+	public SelectFromAndJoin limitOffset(long limit, long offset) {
+		this.limit = limit;
+		this.offset = offset;
 		return this;
 	}
 
 	@Override
-	public SelectFromAndJoin limitOffset(long limit, long offset) {
+	public SelectFromAndJoin limit(long limit) {
 		this.limit = limit;
+		return this;
+	}
+
+	@Override
+	public SelectFromAndJoin offset(long offset) {
 		this.offset = offset;
 		return this;
 	}
@@ -151,7 +161,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 
 	@Override
 	public SelectOn join(String table) {
-		return join(SQL.table(table));
+		return join(Table.create(table));
 	}
 
 	@Override
@@ -173,6 +183,9 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		return select;
 	}
 
+	/**
+	 * Delegation builder to construct JOINs.
+	 */
 	static class JoinBuilder implements SelectOn, SelectOnConditionComparison, SelectFromAndJoinCondition {
 
 		private final Table table;
@@ -187,38 +200,38 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		}
 
 		@Override
-		public SelectOnConditionComparison on(String field) {
-			return on(SQL.column(field));
+		public SelectOnConditionComparison on(String column) {
+			return on(Column.create(column));
 		}
 
 		@Override
-		public SelectOnConditionComparison on(Expression field) {
+		public SelectOnConditionComparison on(Expression column) {
 
-			this.from = field;
+			this.from = column;
 			return this;
 		}
 
 		@Override
-		public JoinBuilder equals(String field) {
-			return equals(SQL.column(field));
+		public JoinBuilder equals(String column) {
+			return equals(Column.create(column));
 		}
 
 		@Override
-		public JoinBuilder equals(Expression field) {
-			this.to = field;
+		public JoinBuilder equals(Expression column) {
+			this.to = column;
 			return this;
 		}
 
 		@Override
-		public SelectOnConditionComparison and(String field) {
-			return and(SQL.column(field));
+		public SelectOnConditionComparison and(String column) {
+			return and(Column.create(column));
 		}
 
 		@Override
-		public SelectOnConditionComparison and(Expression field) {
+		public SelectOnConditionComparison and(Expression column) {
 
 			finishCondition();
-			this.from = field;
+			this.from = column;
 			return this;
 		}
 
@@ -288,15 +301,21 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		}
 
 		@Override
-		public SelectFromAndJoin limitOffset(PageRequest pageable) {
-			selectBuilder.join(finishJoin());
-			return selectBuilder.limitOffset(pageable);
-		}
-
-		@Override
 		public SelectFromAndJoin limitOffset(long limit, long offset) {
 			selectBuilder.join(finishJoin());
 			return selectBuilder.limitOffset(limit, offset);
+		}
+
+		@Override
+		public SelectFromAndJoin limit(long limit) {
+			selectBuilder.join(finishJoin());
+			return selectBuilder.limit(limit);
+		}
+
+		@Override
+		public SelectFromAndJoin offset(long offset) {
+			selectBuilder.join(finishJoin());
+			return selectBuilder.offset(offset);
 		}
 
 		@Override
