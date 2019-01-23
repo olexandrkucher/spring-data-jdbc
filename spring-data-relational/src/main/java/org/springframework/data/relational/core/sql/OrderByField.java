@@ -25,12 +25,12 @@ public class OrderByField extends AbstractSegment implements Segment {
 		this.nullHandling = nullHandling;
 	}
 
-	public static OrderByField from(SelectColumn column) {
+	public static OrderByField from(Column column) {
 		return new OrderByField(column, null, NullHandling.NATIVE);
 	}
 
 	public static OrderByField create(String name) {
-		return new OrderByField(SelectColumn.create(name), null, NullHandling.NATIVE);
+		return new OrderByField(Column.create(name), null, NullHandling.NATIVE);
 	}
 
 	public static OrderByField index(int index) {

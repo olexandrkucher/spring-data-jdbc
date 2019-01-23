@@ -5,6 +5,7 @@ package org.springframework.data.relational.core.sql;
  *
  * @author Mark Paluch
  */
+@FunctionalInterface
 public interface Visitor {
 
 	/**
@@ -19,5 +20,7 @@ public interface Visitor {
 	 *
 	 * @param segment the visited segment.
 	 */
-	void leave(Visitable segment);
+	default void leave(Visitable segment) {
+
+	}
 }

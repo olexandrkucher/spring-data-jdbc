@@ -1,7 +1,12 @@
 package org.springframework.data.relational.core.sql;
 
+import org.springframework.util.Assert;
+
 /**
+ * {@link Condition} representing an {@code AND} relation between two {@link Condition}s.
+ *
  * @author Mark Paluch
+ * @see Condition#and(Condition)
  */
 public class AndCondition implements Condition {
 
@@ -13,20 +18,27 @@ public class AndCondition implements Condition {
 		this.right = right;
 	}
 
-
 	@Override
 	public void visit(Visitor visitor) {
 
-		visitor.leave(this);
+		Assert.notNull(visitor, "Visitor must not be null!");
+
 		visitor.enter(this);
 		left.visit(visitor);
 		right.visit(visitor);
+		visitor.leave(this);
 	}
 
+	/**
+	 * @return the left {@link Condition}.
+	 */
 	public Condition getLeft() {
 		return left;
 	}
 
+	/**
+	 * @return the right {@link Condition}.
+	 */
 	public Condition getRight() {
 		return right;
 	}

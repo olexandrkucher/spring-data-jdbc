@@ -77,7 +77,7 @@ public interface SelectBuilder {
 
 		SelectOrdered orderBy(Collection<? extends OrderByField> orderByFields);
 
-		SelectOrdered orderBy(SelectColumn... selectColumns);
+		SelectOrdered orderBy(Column... columns);
 	}
 
 	interface SelectWhere extends SelectOrdered, BuildSelect {

@@ -1,30 +1,36 @@
 package org.springframework.data.relational.core.sql;
 
+import org.springframework.lang.Nullable;
+
 /**
  * Bind marker/parameter placeholder used to construct prepared statements with parameter substitution.
  *
  * @author Mark Paluch
  */
-public class BindMarker implements Segment, Named {
-
-	private final String name;
-
-	BindMarker(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
+public class BindMarker implements Segment {
 
 	@Override
 	public String toString() {
+		return "?";
+	}
 
-		if (name != null) {
-			return "?[" + name + "]";
+	static class NamedBindMarker extends BindMarker implements Named {
+
+		private final String name;
+
+		NamedBindMarker(String name) {
+			this.name = name;
 		}
 
-		return "?";
+		@Nullable
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String toString() {
+			return "?[" + name + "]";
+		}
 	}
 }

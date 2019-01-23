@@ -1,5 +1,7 @@
 package org.springframework.data.relational.core.sql;
 
+import org.springframework.util.Assert;
+
 /**
  * Simple condition consisting of {@link Expression}, {@code comparator} and {@code predicate}.
  *
@@ -20,12 +22,23 @@ public class SimpleCondition extends AbstractSegment implements Condition {
 		this.predicate = predicate;
 	}
 
+	/**
+	 * Creates a simple {@link Condition} given {@code column}, {@code comparator} and {@code predicate}.
+	 *
+	 * @param column
+	 * @param comparator
+	 * @param predicate
+	 * @return
+	 */
 	public static SimpleCondition create(String column, String comparator, String predicate) {
-		return new SimpleCondition(new SelectColumn(column, null), comparator, predicate);
+		return new SimpleCondition(new Column(column, null), comparator, predicate);
 	}
 
 	@Override
 	public void visit(Visitor visitor) {
+
+		Assert.notNull(visitor, "Visitor must not be null!");
+
 		visitor.enter(this);
 		expression.visit(visitor);
 		visitor.leave(this);

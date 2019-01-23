@@ -24,8 +24,8 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	private long limit = -1;
 	private long offset = -1;
 	private List<Join> joins = new ArrayList<>();
-	private List<OrderByField> orderBy = new ArrayList<>();
 	private Condition where;
+	private List<OrderByField> orderBy = new ArrayList<>();
 
 	@Override
 	public SelectBuilder top(int topCount) {
@@ -119,10 +119,10 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectOrdered orderBy(SelectColumn... selectColumns) {
+	public SelectOrdered orderBy(Column... columns) {
 
-		for (SelectColumn selectColumn : selectColumns) {
-			this.orderBy.add(OrderByField.from(selectColumn));
+		for (Column column : columns) {
+			this.orderBy.add(OrderByField.from(column));
 		}
 
 		return this;
@@ -168,7 +168,9 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 
 	@Override
 	public Select build() {
-		return null;
+		DefaultSelect select = new DefaultSelect(top, selectList, from, limit, offset, joins, where, orderBy);
+		SelectValidator.validate(select);
+		return select;
 	}
 
 	static class JoinBuilder implements SelectOn, SelectOnConditionComparison, SelectFromAndJoinCondition {
@@ -193,7 +195,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		public SelectOnConditionComparison on(Expression field) {
 
 			this.from = field;
-			return null;
+			return this;
 		}
 
 		@Override
@@ -204,7 +206,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		@Override
 		public JoinBuilder equals(Expression field) {
 			this.to = field;
-			return null;
+			return this;
 		}
 
 		@Override
@@ -226,14 +228,14 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 			if (condition == null) {
 				condition = equals;
 			} else {
-				condition.and(equals);
+				condition = condition.and(equals);
 			}
 		}
 
 		private Join finishJoin() {
 
 			finishCondition();
-			return new Join(table, JoinType.JOIN, condition);
+			return new Join(JoinType.JOIN, table, condition);
 		}
 
 		@Override
@@ -262,9 +264,9 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 		}
 
 		@Override
-		public SelectOrdered orderBy(SelectColumn... selectColumns) {
+		public SelectOrdered orderBy(Column... columns) {
 			selectBuilder.join(finishJoin());
-			return selectBuilder.orderBy(selectColumns);
+			return selectBuilder.orderBy(columns);
 		}
 
 		@Override

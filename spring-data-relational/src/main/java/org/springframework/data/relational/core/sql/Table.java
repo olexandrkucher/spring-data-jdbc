@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.util.Assert;
 
 /**
- * Represents a table reference within an SQL statement. Typically used to denote {@code FROM} or {@code JOIN} or to prefix a {@link SelectColumn}.
+ * Represents a table reference within an SQL statement. Typically used to denote {@code FROM} or {@code JOIN} or to prefix a {@link Column}.
+ * <p/>
+ * Renders to: {@code <name>} or {@code <name> AS <name>}.
  *
  * @author Mark Paluch
  */
@@ -18,6 +20,12 @@ public class Table extends AbstractSegment implements Segment, Named {
 		this.name = name;
 	}
 
+	/**
+	 * Creates a new {@link Table} given {@code name}.
+	 *
+	 * @param name must not be {@literal null} or empty.
+	 * @return the new {@link Table}.
+	 */
 	public static Table create(String name) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
@@ -25,14 +33,27 @@ public class Table extends AbstractSegment implements Segment, Named {
 		return new Table(name);
 	}
 
+	/**
+	 * Creates a new {@link Table} using an {@code alias}.
+	 *
+	 * @param name must not be {@literal null} or empty.
+	 * @param alias must not be {@literal null} or empty.
+	 * @return the new {@link Table} using the {@code alias}.
+	 */
 	public static Table aliased(String name, String alias) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
-		Assert.hasText(name, "Name must not be null or empty!");
+		Assert.hasText(alias, "Alias must not be null or empty!");
 
 		return new AliasedTable(name, alias);
 	}
 
+	/**
+	 * Create a new {@link Table} aliased to {@code alias}.
+	 *
+	 * @param alias must not be {@literal null} or empty.
+	 * @return the new {@link Table} using the {@code alias}.
+	 */
 	public Table as(String alias) {
 
 		Assert.hasText(alias, "Alias must not be null or empty!");
@@ -40,18 +61,34 @@ public class Table extends AbstractSegment implements Segment, Named {
 		return new AliasedTable(name, alias);
 	}
 
-	public SelectColumn column(String name) {
+	/**
+	 * Create a new {@link Column} associated with this {@link Table}.
+	 * <p/>
+	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all {@link Column}s that were created for this table.
+	 *
+	 * @param name column name, must not be {@literal null} or empty.
+	 * @return a new {@link Column} associated with this {@link Table}.
+	 */
+	public Column column(String name) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
 
-		return new SelectColumn(name, this);
+		return new Column(name, this);
 	}
 
-	public List<SelectColumn> columns(String... names) {
+	/**
+	 * Create a {@link List} of {@link Column}s associated with this {@link Table}.
+	 * <p/>
+	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all {@link Column}s that were created for this table.
+	 *
+	 * @param names column names, must not be {@literal null} or empty.
+	 * @return a new {@link List} of {@link Column}s associated with this {@link Table}.
+	 */
+	public List<Column> columns(String... names) {
 
 		Assert.notNull(names, "Names must not be null");
 
-		List<SelectColumn> columns = new ArrayList<>();
+		List<Column> columns = new ArrayList<>();
 		for (String name : names) {
 			columns.add(column(name));
 		}
@@ -59,10 +96,18 @@ public class Table extends AbstractSegment implements Segment, Named {
 		return columns;
 	}
 
-	public SelectAllFromTable all() {
-		return new SelectAllFromTable(this);
+	/**
+	 * Creates a {@link AsteriskFromTable} maker selecting all columns from this {@link Table} (e.g. {@code SELECT <table>.*}.
+	 *
+	 * @return the select all marker for this {@link Table}.
+	 */
+	public AsteriskFromTable asterisk() {
+		return new AsteriskFromTable(this);
 	}
 
+	/**
+	 * @return the table name.
+	 */
 	public String getName() {
 		return name;
 	}

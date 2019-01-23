@@ -4,6 +4,7 @@ package org.springframework.data.relational.core.sql;
  * AST {@link Segment} for a condition.
  *
  * @author Mark Paluch
+ * @see Conditions
  */
 public interface Condition extends Segment {
 

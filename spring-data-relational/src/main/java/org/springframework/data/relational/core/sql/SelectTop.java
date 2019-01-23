@@ -17,6 +17,9 @@ public class SelectTop extends AbstractSegment implements Segment {
 		return new SelectTop(count);
 	}
 
+	/**
+	 * @return the count.
+	 */
 	public int getCount() {
 		return count;
 	}
