@@ -24,8 +24,8 @@ public class Join implements Segment {
 
 		visitor.enter(this);
 
-		visitor.enter(joinTable);
-		visitor.enter(on);
+		joinTable.visit(visitor);
+		on.visit(visitor);
 
 		visitor.leave(this);
 	}

@@ -99,12 +99,12 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectOrdered orderBy(String field) {
+	public DefaultSelectBuilder orderBy(String field) {
 		return orderBy(OrderByField.create(field));
 	}
 
 	@Override
-	public SelectOrdered orderBy(int... indexes) {
+	public DefaultSelectBuilder orderBy(int... indexes) {
 
 		for (int index : indexes) {
 			this.orderBy.add(OrderByField.index(index));
@@ -113,7 +113,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectOrdered orderBy(OrderByField... orderByFields) {
+	public DefaultSelectBuilder orderBy(OrderByField... orderByFields) {
 
 		this.orderBy.addAll(Arrays.asList(orderByFields));
 
@@ -121,7 +121,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectOrdered orderBy(Collection<? extends OrderByField> orderByFields) {
+	public DefaultSelectBuilder orderBy(Collection<? extends OrderByField> orderByFields) {
 
 		this.orderBy.addAll(orderByFields);
 
@@ -129,7 +129,7 @@ class DefaultSelectBuilder implements SelectBuilder, SelectAndFrom, SelectFromAn
 	}
 
 	@Override
-	public SelectOrdered orderBy(Column... columns) {
+	public DefaultSelectBuilder orderBy(Column... columns) {
 
 		for (Column column : columns) {
 			this.orderBy.add(OrderByField.from(column));

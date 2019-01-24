@@ -152,7 +152,7 @@ public interface SelectBuilder {
 		 * @see From
 		 * @see SQL#table(String)
 		 */
-		SelectFrom from(String table);
+		SelectFromAndOrderBy from(String table);
 
 		/**
 		 * Declare a {@link Table} to {@code SELECT … FROM}.
@@ -163,7 +163,7 @@ public interface SelectBuilder {
 		 * @see From
 		 * @see SQL#table(String)
 		 */
-		SelectFrom from(Table table);
+		SelectFromAndOrderBy from(Table table);
 
 		/**
 		 * Declare one or more {@link Table}s to {@code SELECT … FROM}.
@@ -174,7 +174,7 @@ public interface SelectBuilder {
 		 * @see From
 		 * @see SQL#table(String)
 		 */
-		SelectFrom from(Table... tables);
+		SelectFromAndOrderBy from(Table... tables);
 
 		/**
 		 * Declare one or more {@link Table}s to {@code SELECT … FROM}.
@@ -185,10 +185,52 @@ public interface SelectBuilder {
 		 * @see From
 		 * @see SQL#table(String)
 		 */
-		SelectFrom from(Collection<? extends Table> tables);
+		SelectFromAndOrderBy from(Collection<? extends Table> tables);
 	}
 
-	interface SelectFromAndJoin extends SelectFrom, BuildSelect, SelectJoin, SelectWhere, SelectLimitOffset {
+	/**
+	 * Builder exposing {@code from} and {@code order by} methods.
+	 */
+	interface SelectFromAndOrderBy extends SelectFrom, SelectOrdered, SelectLimitOffset, BuildSelect {
+
+		@Override
+		SelectFromAndOrderBy limitOffset(long limit, long offset);
+
+		@Override
+		SelectFromAndOrderBy limit(long limit);
+
+		@Override
+		SelectFromAndOrderBy offset(long offset);
+
+		@Override
+		SelectFromAndOrderBy from(String table);
+
+		@Override
+		SelectFromAndOrderBy from(Table table);
+
+		@Override
+		SelectFromAndOrderBy from(Table... tables);
+
+		@Override
+		SelectFromAndOrderBy from(Collection<? extends Table> tables);
+
+		@Override
+		SelectFromAndOrderBy orderBy(String field);
+
+		@Override
+		SelectFromAndOrderBy orderBy(Column... columns);
+
+		@Override
+		SelectFromAndOrderBy orderBy(int... indexes);
+
+		@Override
+		SelectFromAndOrderBy orderBy(OrderByField... orderByFields);
+
+		@Override
+		SelectFromAndOrderBy orderBy(Collection<? extends OrderByField> orderByFields);
+	}
+
+	interface SelectFromAndJoin extends SelectFromAndOrderBy, BuildSelect, SelectJoin, SelectWhere, SelectLimitOffset {
 
 		/**
 		 * Declare a {@link Table} to {@code SELECT … FROM}.

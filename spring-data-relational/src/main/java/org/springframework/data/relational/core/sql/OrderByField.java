@@ -75,17 +75,10 @@ public class OrderByField extends AbstractSegment implements Segment {
 		return direction != null ? expression.toString() + " " + direction : expression.toString();
 	}
 
-	static class IndexedOrderByField extends AbstractSegment implements Expression {
-
-		private final int index;
+	static class IndexedOrderByField extends Column implements Expression {
 
 		IndexedOrderByField(int index) {
-			this.index = index;
-		}
-
-		@Override
-		public String toString() {
-			return Integer.toString(index);
+			super("" + index, null);
 		}
 	}
 }

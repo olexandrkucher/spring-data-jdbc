@@ -34,6 +34,14 @@ public class SimpleCondition extends AbstractSegment implements Condition {
 		return new SimpleCondition(new Column(column, null), comparator, predicate);
 	}
 
+	public String getComparator() {
+		return comparator;
+	}
+
+	public String getPredicate() {
+		return predicate;
+	}
+
 	@Override
 	public void visit(Visitor visitor) {
 

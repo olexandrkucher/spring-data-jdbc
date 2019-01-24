@@ -1,5 +1,6 @@
 package org.springframework.data.relational.core.sql;
 
+import java.util.OptionalLong;
 import java.util.Stack;
 import java.util.function.Consumer;
 
@@ -57,7 +58,11 @@ public class NaiveSqlRenderer {
 		StringBuilder builder = new StringBuilder();
 
 		private boolean hasDistinct = false;
+		private boolean hasOrderBy = false;
 		private boolean nextRequiresComma = false;
+		private boolean nextExpressionRequiresContinue = false;
+		private boolean nextConditionRequiresContinue = false;
+		private boolean inSelectList = false;
 		private Stack<Visitable> segments = new Stack<>();
 
 		@Override
@@ -65,22 +70,34 @@ public class NaiveSqlRenderer {
 
 			if (segment instanceof Select) {
 				builder.append("SELECT ");
+				inSelectList = true;
 			}
 
 			if (segment instanceof From) {
 
 				nextRequiresComma = false;
 
-				if (requiresSpace()) {
-					builder.append(' ');
-				}
+				addSpaceIfNecessary();
 
 				builder.append("FROM ");
+			}
+
+			if (segment instanceof From || segment instanceof Join) {
+				inSelectList = false;
 			}
 
 			if (segment instanceof Distinct && !hasDistinct) {
 				builder.append("DISTINCT ");
 				hasDistinct = true;
+			}
+
+			if (segment instanceof OrderByField && !hasOrderBy) {
+
+				addSpaceIfNecessary();
+
+				builder.append("ORDER BY ");
+				nextRequiresComma = false;
+				hasOrderBy = true;
 			}
 
 			if (segment instanceof SimpleFunction) {
@@ -91,9 +108,7 @@ public class NaiveSqlRenderer {
 
 			if (segment instanceof Table && segments.peek() instanceof From) {
 
-				if (nextRequiresComma) {
-					builder.append(", ");
-				}
+				addCommaIfNecessary();
 
 				Table table = (Table) segment;
 
@@ -102,6 +117,64 @@ public class NaiveSqlRenderer {
 				ifAliased(segment, aliased -> builder.append(" AS ").append(aliased.getAlias()));
 
 				nextRequiresComma = true;
+			}
+
+			if (segment instanceof Join) {
+
+				addSpaceIfNecessary();
+
+				Join join = (Join) segment;
+
+				builder.append(join.getType());
+			}
+
+			if (segment instanceof Table && segments.peek() instanceof Join) {
+
+				addSpaceIfNecessary();
+
+				Table table = (Table) segment;
+
+				builder.append(table.getName());
+				ifAliased(segment, aliased -> builder.append(" AS ").append(aliased.getAlias()));
+			}
+
+			if (segment instanceof Condition) {
+				nextRequiresComma = false;
+			}
+
+			if (segment instanceof Condition && segments.peek() instanceof Join) {
+
+				addSpaceIfNecessary();
+
+				builder.append("ON ");
+			}
+
+			if ((segment instanceof Expression || segment instanceof Condition) && segments.peek() instanceof Condition) {
+
+				if (segment instanceof Expression) {
+
+					if (!nextExpressionRequiresContinue) {
+						nextExpressionRequiresContinue = true;
+					} else {
+
+						renderCombinator((Condition) segments.peek());
+						nextExpressionRequiresContinue = false;
+					}
+				}
+			}
+
+			if (segment instanceof ConditionGroup) {
+				addSpaceIfNecessary();
+				builder.append("(");
+			} else if (segment instanceof Condition && segments.peek() instanceof Condition) {
+
+				if (!nextConditionRequiresContinue) {
+					nextConditionRequiresContinue = true;
+				} else {
+
+					renderCombinator((Condition) segments.peek());
+					nextConditionRequiresContinue = false;
+				}
 			}
 
 			segments.add(segment);
@@ -113,20 +186,45 @@ public class NaiveSqlRenderer {
 			segments.pop();
 			Visitable parent = segments.isEmpty() ? null : segments.peek();
 
+			if (segment instanceof Condition) {
+				nextExpressionRequiresContinue = false;
+			}
+
+			if (segment instanceof Select) {
+
+				// Postgres syntax
+				Select select = (Select) segment;
+
+				OptionalLong limit = select.getLimit();
+				OptionalLong offset = select.getOffset();
+
+				limit.ifPresent(count -> {
+					addSpaceIfNecessary();
+					builder.append("LIMIT ").append(count);
+				});
+
+				offset.ifPresent(count -> {
+					addSpaceIfNecessary();
+					builder.append("OFFSET ").append(count);
+				});
+			}
+
 			if (segment instanceof Table && parent instanceof Column) {
 
-				if (nextRequiresComma) {
-					builder.append(", ");
-					nextRequiresComma = false;
+				if (inSelectList || !(parent instanceof Aliased)) {
+
+					if (nextRequiresComma) {
+						builder.append(", ");
+						nextRequiresComma = false;
+					}
+
+					builder.append(((Table) segment).getReferenceName()).append('.');
 				}
-				builder.append(((Table) segment).getReferenceName()).append('.');
 			}
 
 			if (segment instanceof Column && (parent instanceof Select || parent instanceof Distinct || parent instanceof SimpleFunction)) {
 
-				if (nextRequiresComma) {
-					builder.append(", ");
-				}
+				addCommaIfNecessary();
 
 				Column column = (Column) segment;
 
@@ -139,12 +237,72 @@ public class NaiveSqlRenderer {
 				nextRequiresComma = true;
 			}
 
+			if (segment instanceof Column && (parent instanceof Condition || parent instanceof OrderByField)) {
+
+				addCommaIfNecessary();
+
+				Column column = (Column) segment;
+
+				builder.append(column.getReferenceName());
+			}
+
+			if (segment instanceof OrderByField) {
+
+				OrderByField orderBy = (OrderByField) segment;
+
+				if (orderBy.getDirection() != null) {
+					builder.append(' ').append(orderBy.getDirection());
+				}
+				nextRequiresComma = true;
+			}
+
 			if (segment instanceof SimpleFunction) {
 
 				builder.append(")");
 				ifAliased(segment, aliased -> builder.append(" AS ").append(aliased.getAlias()));
 
 				nextRequiresComma = true;
+			}
+
+			if (segment instanceof ConditionGroup) {
+				builder.append(")");
+			}
+
+			if (segment instanceof SimpleCondition) {
+
+				nextRequiresComma = false;
+
+				SimpleCondition condition = (SimpleCondition) segment;
+
+				builder.append(' ').append(condition.getPredicate()).append(' ').append(condition.getPredicate());
+			}
+		}
+
+		private void addCommaIfNecessary() {
+			if (nextRequiresComma) {
+				builder.append(", ");
+			}
+		}
+
+		private void addSpaceIfNecessary() {
+
+			if (requiresSpace()) {
+				builder.append(' ');
+			}
+		}
+
+		private void renderCombinator(Condition condition) {
+
+			if (condition instanceof Equals) {
+				builder.append(" = ");
+			}
+
+			if (condition instanceof AndCondition) {
+				builder.append(" AND ");
+			}
+
+			if (condition instanceof OrCondition) {
+				builder.append(" OR ");
 			}
 		}
 
