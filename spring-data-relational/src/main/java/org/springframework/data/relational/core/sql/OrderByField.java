@@ -49,6 +49,10 @@ public class OrderByField extends AbstractSegment implements Segment {
 		return new OrderByField(expression, direction, nullHandling);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -70,6 +74,10 @@ public class OrderByField extends AbstractSegment implements Segment {
 		return nullHandling;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return direction != null ? expression.toString() + " " + direction : expression.toString();

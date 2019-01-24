@@ -32,23 +32,30 @@ class SelectValidator implements Visitor {
 
 		for (Table table : requiredBySelect) {
 			if (!join.contains(table) && !from.contains(table)) {
-				throw new IllegalStateException(String.format("Required table [%s] by a SELECT column not imported by FROM %s or JOIN %s", table, from, join));
+				throw new IllegalStateException(String
+						.format("Required table [%s] by a SELECT column not imported by FROM %s or JOIN %s", table, from, join));
 			}
 		}
 
 		for (Table table : requiredByWhere) {
 			if (!join.contains(table) && !from.contains(table)) {
-				throw new IllegalStateException(String.format("Required table [%s] by a WHERE predicate not imported by FROM %s or JOIN %s", table, from, join));
+				throw new IllegalStateException(String
+						.format("Required table [%s] by a WHERE predicate not imported by FROM %s or JOIN %s", table, from, join));
 			}
 		}
 
 		for (Table table : requiredByOrderBy) {
 			if (!join.contains(table) && !from.contains(table)) {
-				throw new IllegalStateException(String.format("Required table [%s] by a ORDER BY column not imported by FROM %s or JOIN %s", table, from, join));
+				throw new IllegalStateException(String
+						.format("Required table [%s] by a ORDER BY column not imported by FROM %s or JOIN %s", table, from, join));
 			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitor#enter(org.springframework.data.relational.core.sql.Visitable)
+	 */
 	@Override
 	public void enter(Visitable segment) {
 
@@ -59,7 +66,8 @@ class SelectValidator implements Visitor {
 			selectFieldCount++;
 		}
 
-		if (segment instanceof Column && (parent instanceof Select || parent instanceof SimpleFunction || parent instanceof Distinct)) {
+		if (segment instanceof Column
+				&& (parent instanceof Select || parent instanceof SimpleFunction || parent instanceof Distinct)) {
 
 			selectFieldCount++;
 			Table table = ((Column) segment).getTable();
@@ -96,11 +104,17 @@ class SelectValidator implements Visitor {
 			});
 		}
 
-		if (segment instanceof Join || segment instanceof OrderByField || segment instanceof From || segment instanceof Select || segment instanceof Where || segment instanceof SimpleFunction || segment instanceof Distinct) {
+		if (segment instanceof Join || segment instanceof OrderByField || segment instanceof From
+				|| segment instanceof Select || segment instanceof Where || segment instanceof SimpleFunction
+				|| segment instanceof Distinct) {
 			parent = segment;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitor#leave(org.springframework.data.relational.core.sql.Visitable)
+	 */
 	@Override
 	public void leave(Visitable segment) {
 	}

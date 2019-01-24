@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.util.Assert;
 
 /**
- * Represents a table reference within an SQL statement. Typically used to denote {@code FROM} or {@code JOIN} or to prefix a {@link Column}.
+ * Represents a table reference within an SQL statement. Typically used to denote {@code FROM} or {@code JOIN} or to
+ * prefix a {@link Column}.
  * <p/>
  * Renders to: {@code <name>} or {@code <name> AS <name>}.
  *
@@ -64,7 +65,8 @@ public class Table extends AbstractSegment implements Segment, Named {
 	/**
 	 * Create a new {@link Column} associated with this {@link Table}.
 	 * <p/>
-	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all {@link Column}s that were created for this table.
+	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all
+	 * {@link Column}s that were created for this table.
 	 *
 	 * @param name column name, must not be {@literal null} or empty.
 	 * @return a new {@link Column} associated with this {@link Table}.
@@ -79,7 +81,8 @@ public class Table extends AbstractSegment implements Segment, Named {
 	/**
 	 * Create a {@link List} of {@link Column}s associated with this {@link Table}.
 	 * <p/>
-	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all {@link Column}s that were created for this table.
+	 * Note: This {@link Table} does not track column creation and there is no possibility to enumerate all
+	 * {@link Column}s that were created for this table.
 	 *
 	 * @param names column names, must not be {@literal null} or empty.
 	 * @return a new {@link List} of {@link Column}s associated with this {@link Table}.
@@ -97,7 +100,9 @@ public class Table extends AbstractSegment implements Segment, Named {
 	}
 
 	/**
-	 * Creates a {@link AsteriskFromTable} maker selecting all columns from this {@link Table} (e.g. {@code SELECT <table>.*}.
+	 * Creates a {@link AsteriskFromTable} maker selecting all columns from this {@link Table} (e.g. {@code SELECT
+	 * <table>
+	 * .*}.
 	 *
 	 * @return the select all marker for this {@link Table}.
 	 */
@@ -108,17 +113,26 @@ public class Table extends AbstractSegment implements Segment, Named {
 	/**
 	 * @return the table name.
 	 */
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Named#getName()
+	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return the table name as it is used in references. This can be the actual {@link #getName() name} or an {@link Aliased#getAlias() alias}.
+	 * @return the table name as it is used in references. This can be the actual {@link #getName() name} or an
+	 *         {@link Aliased#getAlias() alias}.
 	 */
 	public String getReferenceName() {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return name;
@@ -139,16 +153,28 @@ public class Table extends AbstractSegment implements Segment, Named {
 			this.alias = alias;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Aliased#getAlias()
+		 */
 		@Override
 		public String getAlias() {
 			return alias;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Table#getReferenceName()
+		 */
 		@Override
 		public String getReferenceName() {
 			return getAlias();
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Table#toString()
+		 */
 		@Override
 		public String toString() {
 			return getName() + " AS " + getAlias();

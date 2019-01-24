@@ -16,6 +16,10 @@ public class ConditionGroup implements Condition {
 		this.nested = nested;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -33,9 +37,12 @@ public class ConditionGroup implements Condition {
 		return nested;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "(" + nested.toString() + ")";
 	}
 }
-

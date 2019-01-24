@@ -15,7 +15,7 @@ import org.springframework.data.relational.core.sql.Join.JoinType;
  */
 public class SelectBuilderUnitTests {
 
-	@Test
+	@Test // DATAJDBC-309
 	public void simpleSelect() {
 
 		SelectBuilder builder = SQL.select();
@@ -33,7 +33,7 @@ public class SelectBuilderUnitTests {
 		assertThat(visitor.leave).containsSequence(foo, bar, table, new From(table));
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void selectTop() {
 
 		SelectBuilder builder = SQL.select();
@@ -49,7 +49,7 @@ public class SelectBuilderUnitTests {
 		assertThat(visitor.enter).containsSequence(SelectTop.create(10), foo, new From(table), table);
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void moreAdvancedSelect() {
 
 		SelectBuilder builder = SQL.select();
@@ -68,7 +68,7 @@ public class SelectBuilderUnitTests {
 		assertThat(visitor.enter).containsSequence(foo, table1, bar, table2, new From(table1, table2), table1, table2);
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void orderBy() {
 
 		SelectBuilder builder = SQL.select();
@@ -86,7 +86,7 @@ public class SelectBuilderUnitTests {
 		assertThat(visitor.enter).containsSequence(foo, table, new From(table), table, orderByField, foo);
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void joins() {
 
 		SelectBuilder builder = SQL.select();

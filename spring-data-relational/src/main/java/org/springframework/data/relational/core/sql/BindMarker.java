@@ -9,6 +9,10 @@ import org.springframework.lang.Nullable;
  */
 public class BindMarker implements Segment {
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "?";
@@ -22,12 +26,20 @@ public class BindMarker implements Segment {
 			this.name = name;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Named#getName()
+		 */
 		@Nullable
 		@Override
 		public String getName() {
 			return name;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.BindMarker#toString()
+		 */
 		@Override
 		public String toString() {
 			return "?[" + name + "]";

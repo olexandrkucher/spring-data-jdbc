@@ -23,7 +23,8 @@ class DefaultSelect implements Select {
 	private final @Nullable Where where;
 	private final List<OrderByField> orderBy;
 
-	DefaultSelect(@Nullable SelectTop top, List<Expression> selectList, List<Table> from, long limit, long offset, List<Join> joins, @Nullable Condition where, List<OrderByField> orderBy) {
+	DefaultSelect(@Nullable SelectTop top, List<Expression> selectList, List<Table> from, long limit, long offset,
+				  List<Join> joins, @Nullable Condition where, List<OrderByField> orderBy) {
 
 		this.top = top;
 		this.selectList = new ArrayList<>(selectList);
@@ -35,16 +36,28 @@ class DefaultSelect implements Select {
 		this.where = where != null ? new Where(where) : null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Select#getLimit()
+	 */
 	@Override
 	public OptionalLong getLimit() {
 		return limit == -1 ? OptionalLong.empty() : OptionalLong.of(limit);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Select#getOffset()
+	 */
 	@Override
 	public OptionalLong getOffset() {
 		return offset == -1 ? OptionalLong.empty() : OptionalLong.of(offset);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 

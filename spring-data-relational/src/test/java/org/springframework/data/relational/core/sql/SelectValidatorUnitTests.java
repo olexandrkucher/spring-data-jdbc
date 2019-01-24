@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class SelectValidatorUnitTests {
 
-	@Test
+	@Test // DATAJDBC-309
 	public void shouldReportMissingTableViaSelectlist() {
 
 		Column column = SQL.table("table").column("foo");
@@ -21,7 +21,7 @@ public class SelectValidatorUnitTests {
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void shouldReportMissingTableViaSelectlistCount() {
 
 		Column column = SQL.table("table").column("foo");
@@ -31,7 +31,7 @@ public class SelectValidatorUnitTests {
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void shouldReportMissingTableViaSelectlistDistinct() {
 
 		Column column = SQL.table("table").column("foo");
@@ -41,7 +41,7 @@ public class SelectValidatorUnitTests {
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a SELECT column not imported by FROM [bar] or JOIN []");
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void shouldReportMissingTableViaOrderBy() {
 
 		Column column = SQL.table("table").column("foo");
@@ -53,7 +53,7 @@ public class SelectValidatorUnitTests {
 		}).isInstanceOf(IllegalStateException.class).hasMessageContaining("Required table [table] by a ORDER BY column not imported by FROM [bar] or JOIN []");
 	}
 
-	@Test
+	@Test // DATAJDBC-309
 	public void shouldReportMissingTableViaWhere() {
 
 		Column column = SQL.table("table").column("foo");

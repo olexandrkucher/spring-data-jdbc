@@ -109,6 +109,10 @@ public class Column extends AbstractSegment implements Expression, Named {
 		return new Column(name, table);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -122,26 +126,36 @@ public class Column extends AbstractSegment implements Expression, Named {
 		visitor.leave(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Named#getName()
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return the column name as it is used in references. This can be the actual {@link #getName() name} or an {@link Aliased#getAlias() alias}.
+	 * @return the column name as it is used in references. This can be the actual {@link #getName() name} or an
+	 *         {@link Aliased#getAlias() alias}.
 	 */
 	public String getReferenceName() {
 		return name;
 	}
 
 	/**
-	 * @return the {@link Table}. Can be {@literal null} if the column was not referenced in the context of a {@link Table}.
+	 * @return the {@link Table}. Can be {@literal null} if the column was not referenced in the context of a
+	 *         {@link Table}.
 	 */
 	@Nullable
 	public Table getTable() {
 		return table;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 
@@ -168,16 +182,28 @@ public class Column extends AbstractSegment implements Expression, Named {
 			this.alias = alias;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Aliased#getAlias()
+		 */
 		@Override
 		public String getAlias() {
 			return alias;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Column#getReferenceName()
+		 */
 		@Override
 		public String getReferenceName() {
 			return getAlias();
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Column#from(org.springframework.data.relational.core.sql.Table)
+		 */
 		@Override
 		public Column from(Table table) {
 
@@ -186,6 +212,10 @@ public class Column extends AbstractSegment implements Expression, Named {
 			return new AliasedColumn(getName(), table, getAlias());
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Column#toString()
+		 */
 		@Override
 		public String toString() {
 			return getPrefix() + getName() + " AS " + getAlias();

@@ -5,8 +5,9 @@ import org.springframework.data.relational.core.sql.SelectBuilder.SelectAndFrom;
 import org.springframework.util.Assert;
 
 /**
- * Utility to create SQL {@link Segment}s. Typically used as entrypoint to the Query Builder AST.
+ * Utility to create SQL {@link Segment}s. Typically used as entry point to the Query Builder AST.
  * Objects and dependent objects created by the Query AST are immutable except for builders.
+ * <p/>The Query Builder API is intended for framework usage to produce SQL required for framework operations.
  *
  * @author Mark Paluch
  * @see Expressions

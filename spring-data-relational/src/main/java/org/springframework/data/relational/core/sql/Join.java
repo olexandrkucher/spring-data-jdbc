@@ -3,7 +3,9 @@ package org.springframework.data.relational.core.sql;
 /**
  * {@link Segment} for a {@code JOIN} declaration.
  * <p/>
- * Renders to: {@code JOIN <table> ON <condition>}.
+ * Renders to: {@code JOIN
+ * <table>
+ *  ON <condition>}.
  *
  * @author Mark Paluch
  */
@@ -19,6 +21,10 @@ public class Join implements Segment {
 		this.on = on;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -51,6 +57,10 @@ public class Join implements Segment {
 		return on;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return type + " " + joinTable + " ON " + on;
@@ -87,7 +97,6 @@ public class Join implements Segment {
 		 */
 
 		FULL_OUTER_JOIN("FULL OUTER JOIN");
-
 
 		private final String sql;
 

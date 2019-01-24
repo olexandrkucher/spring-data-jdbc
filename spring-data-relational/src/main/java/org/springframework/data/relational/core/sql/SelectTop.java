@@ -24,6 +24,10 @@ public class SelectTop extends AbstractSegment implements Segment {
 		return count;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "TOP " + count;

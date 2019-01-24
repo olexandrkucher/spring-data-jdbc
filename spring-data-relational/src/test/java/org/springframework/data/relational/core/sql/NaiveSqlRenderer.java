@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import org.springframework.util.Assert;
 
 /**
- * Naive SQL renderer that does not consider dialect specifics..
+ * Naive SQL renderer that does not consider dialect specifics. This class is to evaluate requirements of a SQL renderer.
  *
  * @author Mark Paluch
  */
@@ -26,7 +26,7 @@ public class NaiveSqlRenderer {
 	 * Creates a new {@link NaiveSqlRenderer}.
 	 *
 	 * @param select must not be {@literal null}.
-	 * @return
+	 * @return the renderer.
 	 */
 	public static NaiveSqlRenderer create(Select select) {
 		return new NaiveSqlRenderer(select);
@@ -36,12 +36,17 @@ public class NaiveSqlRenderer {
 	 * Renders a {@link Select} statement into its SQL representation.
 	 *
 	 * @param select must not be {@literal null}.
-	 * @return
+	 * @return the rendered statement.
 	 */
 	public static String render(Select select) {
 		return create(select).render();
 	}
 
+	/**
+	 * Render the {@link Select} AST into a SQL statement.
+	 *
+	 * @return the rendered statement.
+	 */
 	public String render() {
 
 		RenderVisitor visitor = new RenderVisitor();
@@ -65,6 +70,10 @@ public class NaiveSqlRenderer {
 		private boolean inSelectList = false;
 		private Stack<Visitable> segments = new Stack<>();
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Visitor#enter(org.springframework.data.relational.core.sql.Visitable)
+		 */
 		@Override
 		public void enter(Visitable segment) {
 
@@ -180,6 +189,10 @@ public class NaiveSqlRenderer {
 			segments.add(segment);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.relational.core.sql.Visitor#leave(org.springframework.data.relational.core.sql.Visitable)
+		 */
 		@Override
 		public void leave(Visitable segment) {
 
@@ -222,7 +235,8 @@ public class NaiveSqlRenderer {
 				}
 			}
 
-			if (segment instanceof Column && (parent instanceof Select || parent instanceof Distinct || parent instanceof SimpleFunction)) {
+			if (segment instanceof Column
+					&& (parent instanceof Select || parent instanceof Distinct || parent instanceof SimpleFunction)) {
 
 				addCommaIfNecessary();
 

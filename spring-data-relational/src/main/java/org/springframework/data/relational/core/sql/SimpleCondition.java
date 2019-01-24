@@ -15,7 +15,6 @@ public class SimpleCondition extends AbstractSegment implements Condition {
 
 	private final String predicate;
 
-
 	SimpleCondition(Expression expression, String comparator, String predicate) {
 		this.expression = expression;
 		this.comparator = comparator;
@@ -42,6 +41,10 @@ public class SimpleCondition extends AbstractSegment implements Condition {
 		return predicate;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.data.relational.core.sql.Visitable#visit(org.springframework.data.relational.core.sql.Visitor)
+	 */
 	@Override
 	public void visit(Visitor visitor) {
 
@@ -52,6 +55,10 @@ public class SimpleCondition extends AbstractSegment implements Condition {
 		visitor.leave(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return expression.toString() + " " + comparator + " " + predicate;
